@@ -1,22 +1,21 @@
-data "aws_caller_identity" "current" {}
+
 
 data "aws_ami" "ami" {
   most_recent = true
-  name_regex  = "devops-practice-with-ansible"
-  owners      = [data.aws_caller_identity.current.account_id]
+  name_regex  = "Centos-8-DevOps-Practice"
+  owners      = ["973714476881"]
 }
 
 
 resource "aws_instance" "ec2" {
   ami                    = data.aws_ami.ami.image_id
   instance_type          = var.instance_type
-  vpc_security_group_ids = [aws_security_group.sg.id]
+  vpc_security_group_ids = [var.sg_id]
   tags = {
     Name = var.component
   }
-}
 
-resource "null_resource" "provisioner" {
+
   provisioner "remote-exec" {
 
     connection {
@@ -69,6 +68,7 @@ resource "aws_route53_record" "record" {
 
 variable "component" {}
 variable "instance_type" {}
+variable "sg_id" {}
 variable "env" {
   default = "dev"
 }
